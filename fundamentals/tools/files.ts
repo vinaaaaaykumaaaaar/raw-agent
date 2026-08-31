@@ -15,6 +15,8 @@ export interface Tool {
     execute(args: any): string | Promise<string>
 }
 
+//LIST TOOL 
+
 const listFilesSchema = z.object({
     dir: z.string().optional().describe("Directory path, e.g. 'src' or 'src/tools"),
 });
@@ -29,6 +31,9 @@ export const listFiles: Tool = {
     },
 }
 
+
+// READ TOOL
+
 const readFileSchema = z.object({
     path: z.string().describe("File path, e.g. 'src/agent.ts'"),
 });
@@ -42,5 +47,27 @@ export const readFile: Tool = {
         return contents.length > 20_000 ? contents.slice(0, 20_000) + "\n...(truncated)" : contents;
     }
 };
+
+
+// CALCULATOR TOOL 
+
+const calculatorSchema = z.object({
+    expression: z.string().describe("Arithmetic expression, e.g. '(2+3)*4'"),
+});
+
+export const calculator: Tool = {
+    name: "calculator",
+    description: "Evaluate an arithmetic expression with + - * / % ** and parentheses, e.g. '(2+3)*4'. " +
+        "Use this instead of doing math in your head.",
+    inputSchema: calculatorSchema,
+    execute({ expression }: z.infer<typeof calculatorSchema>) {
+        if (!/^[\d\s+\-*/%().]+$/.test(expression)) {
+            throw new Error("expression may only contain digits, whitespace and + - * / % ( ) .");
+        }
+        return String(new Function(`return (${expression})`)());
+    },
+}
+
+
 
 
