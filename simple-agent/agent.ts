@@ -10,6 +10,7 @@ export async function runAgent(userInput: string, tools: Tool[]) {
         }
     ];
 
+    console.log(messages);
     while (true) {
         console.log("\n--- CALLING MODEL ---");
 
